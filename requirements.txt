@@ -1,6 +1,2 @@
-streamlit
-diffprivlib
-pandas
-numpy
-plotly
-scikit-learn
+# Runtime uses Python standard library only
+# Tests: pytest>=8.0

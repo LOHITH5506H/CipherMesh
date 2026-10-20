@@ -1,21 +1,51 @@
-# PrivaQuery: Differential Privacy Engine
+# CipherMesh: Secure Collaborative Analytics
 
-### Abstract: The failure of $k$-anonymity against Linkage Attacks
-Traditional data anonymization techniques, such as redacting explicit identifiers (e.g., names or Social Security Numbers) or relying on $k$-anonymity, are fundamentally vulnerable to modern data mining techniques. As demonstrated by the classic Netflix Prize and Massachusetts Group Insurance Commission attacks, adversaries can execute **Linkage Attacks** by cross-referencing auxiliary public profiles against seemingly anonymous datasets to completely de-anonymize individuals. PrivaQuery demonstrates the mathematical failure of these legacy approaches and provides a robust, cryptographically secure alternative using Differential Privacy (DP).
+A polished research/teaching prototype demonstrating collaborative aggregate queries across three synthetic data holders.
 
-### Mathematical Framework: The Laplace Mechanism and Bounded Sensitivity
-Differential Privacy provides a rigorous mathematical guarantee that the presence or absence of any single individual in a dataset does not significantly affect the outcome of any query or statistical model. 
-To achieve this, PrivaQuery implements the **Laplace Mechanism**:
-$$M(x) = f(x) + \text{Laplace}\left(\frac{\Delta f}{\epsilon}\right)$$
-Where $\Delta f$ is the $L_1$ sensitivity of the query, and $\epsilon$ (epsilon) is the privacy budget. By explicitly defining the logical bounds of clinical data (e.g., maximum theoretical income or blood pressure) and dynamically consuming $\epsilon$ for every operation, the engine guarantees that all aggregate statistics, synthetic data generation, and machine learning models remain immune to reconstruction attacks.
+## Features
+- Three separate synthetic hospital CSVs and local sample previews.
+- Seven research queries: average cholesterol, diabetes count, elevated blood-pressure count, average age, total cohort size, diabetes prevalence, and blood-pressure bands.
+- Three selectable aggregation techniques:
+  1. Additive secret sharing / simulated MPC.
+  2. Shamir threshold sharing (2-of-3).
+  3. Paillier additive homomorphic encryption.
+- SHA-256 dataset fingerprints and optional local-contribution metadata commitments.
+- Execution traces, message logs, protocol payload schema, and clear security assumptions.
+- Tests that compare every query across all three protocols.
 
-### Architecture: Zero-dependency embedded pipeline with L2-norm scaled Logistic Regression
-PrivaQuery is built on a **Zero-Dependency Single-File Architecture** to prevent desynchronization between data generation and application state. 
-- **Deterministic Pipeline**: The underlying clinical dataset is generated deterministically in memory, modeling robust correlations between risk factors (`Age`, `BloodPressure`, `Cholesterol`) and `HeartDisease`.
-- **Bounded Feature Scaling**: The machine learning module implements a strict normalization pipeline. Features are normalized via `StandardScaler` and clipped to 3 standard deviations.
-- **DP Machine Learning**: IBM's `diffprivlib` is utilized to train a DP-compliant Logistic Regression model. By rigorously calculating the $L_2$ norm of the feature space as $\sqrt{d} \times 3$ and explicitly passing it as the `data_norm` parameter, the architecture entirely prevents Laplace noise gradient explosions, achieving stable predictive utility ($\approx 0.86$ AUC) while guaranteeing privacy.
+## Run (Windows PowerShell)
+Python 3.10+ recommended. Runtime uses the standard library. Tests use pytest.
 
-### Usage
-```bash
-streamlit run app.py
+```powershell
+cd path\to\CipherMesh_Secure_Collaborative_Analytics
+python -m pip install pytest
+python -m pytest -v
+python app.py
 ```
+
+Open http://127.0.0.1:5000.
+
+To use another port:
+```powershell
+$env:CIPHERMESH_PORT = "5050"
+python app.py
+```
+
+## Structure
+- `app.py`: WSGI web app and interface
+- `crypto_protocol.py`: secret sharing, Shamir, Paillier, audit hashes, query logic
+- `data/`: synthetic hospital CSVs
+- `static/style.css`: visual design
+- `tests/`: protocol and cross-query tests
+
+## Important security limitations
+This is an **educational simulation**, not a production privacy system.
+- All hospitals, workers, aggregation service, and decryptor execute in one Python process. The process operator can read every CSV.
+- Paillier uses tiny fixed demonstration primes and is cryptographically insecure.
+- No independent networked parties, authenticated channels, malicious-party defenses, real key lifecycle, production access controls, or formal protocol verification are included.
+- SHA-256 fingerprints can help detect file changes when compared with a trusted digest; hashes are not encryption and do not establish source authenticity. Contribution commitments are not digital signatures.
+- Outputs are exact aggregates. No differential privacy is applied; small cohorts and repeated queries may reveal information.
+- “Zero raw rows in modeled payload” refers to generated protocol messages, not the server's ability to access source CSVs.
+- All data is synthetic. Never use real patient or personal data.
+
+A serious deployment would require audited cryptographic libraries, independent services, authenticated encrypted transport, identity and key management, query authorization, leakage controls, and an independent security review.
