@@ -17,7 +17,8 @@ A polished research/teaching prototype demonstrating collaborative aggregate que
 Python 3.10+ recommended. Runtime uses the standard library. Tests use pytest.
 
 ```powershell
-cd path\to\CipherMesh_Secure_Collaborative_Analytics
+git clone https://github.com/LOHITH5506H/CipherMesh.git
+cd CipherMesh
 python -m pip install pytest
 python -m pytest -v
 python app.py
