@@ -3,8 +3,11 @@
 A polished research/teaching prototype demonstrating collaborative aggregate queries across three synthetic data holders.
 
 ## Features
+- **Natural Language Custom Queries (AI Compiler)**: Ask arbitrary clinical questions in plain English (e.g. *"What is the average age of diabetic patients?"* or *"How many patients have systolic BP over 140?"*).
+- **Gemini API & Offline Fallback**: Translates natural language into a sandboxed, schema-bounded MPC query plan via Gemini (`gemini-2.5-flash`), with a zero-dependency intelligent local NLP fallback.
+- **Zero Raw Data to Cloud**: Only column names and the user's question are compiled into a query plan; raw patient rows never leave local hospital nodes.
 - Three separate synthetic hospital CSVs and local sample previews.
-- Seven research queries: average cholesterol, diabetes count, elevated blood-pressure count, average age, total cohort size, diabetes prevalence, and blood-pressure bands.
+- Pre-built research queries: average cholesterol, diabetes count, elevated blood-pressure count, average age, total cohort size, diabetes prevalence, and blood-pressure bands.
 - Three selectable aggregation techniques:
   1. Additive secret sharing / simulated MPC.
   2. Shamir threshold sharing (2-of-3).
@@ -33,11 +36,12 @@ python app.py
 ```
 
 ## Structure
-- `app.py`: WSGI web app and interface
+- `app.py`: WSGI web app, natural language interface, and dashboard
+- `query_engine.py`: Gemini API compiler, natural language parser, safe AST, bounded vector evaluator
 - `crypto_protocol.py`: secret sharing, Shamir, Paillier, audit hashes, query logic
 - `data/`: synthetic hospital CSVs
 - `static/style.css`: visual design
-- `tests/`: protocol and cross-query tests
+- `tests/`: protocol, query compiler, and web app tests
 
 ## Important security limitations
 This is an **educational simulation**, not a production privacy system.

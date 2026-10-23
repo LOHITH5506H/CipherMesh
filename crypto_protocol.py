@@ -123,7 +123,23 @@ def format_result(q,v):
  label="records" if q=="patient_count" else "patients"
  return {"display":f"{int(v[0])} {label}","components":{"Aggregate count":int(v[0])}}
 
-def execute_private_query(q,datasets,protocol="additive",integrity=True):
+def execute_private_query(q,datasets,protocol="additive",integrity=True,custom_spec=None):
+ if custom_spec:
+  from query_engine import evaluate_custom_local_contribution, format_custom_result
+  if protocol not in PROTOCOLS: raise ValueError("Unsupported cryptographic protocol.")
+  if any(k not in datasets for k in HOSPITALS): raise ValueError("All three synthetic datasets must be loaded.")
+  local={k:evaluate_custom_local_contribution(custom_spec,datasets[k]) for k in HOSPITALS}
+  if protocol=="additive": vec,packets,trace=additive_compute(local)
+  elif protocol=="shamir": vec,packets,trace=shamir_compute(local)
+  else: vec,packets,trace=paillier_compute(local)
+  audit=[]
+  if integrity:
+   for site,v in local.items():
+    msg=(site+"|custom|"+",".join(map(str,v))).encode()
+    audit.append({"site":HOSPITALS[site]["code"],"digest":hashlib.sha256(msg).hexdigest(),"status":"Commitment recorded"})
+   trace.append("SHA-256 commitments were generated for local contribution metadata. Hashing is not encryption and does not prove source authenticity.")
+  formatted=format_custom_result(custom_spec,vec)
+  return {"query_id":"CM-"+uuid.uuid4().hex[:10].upper(),"query_key":"custom","protocol_key":protocol,"protocol":PROTOCOLS[protocol]["label"],"result":formatted,"packet_summary":packets,"trace":trace,"audit":audit,"raw_rows_sent":0,"custom_spec":custom_spec}
  if q not in QUERY_SPECS: raise ValueError("Unsupported query.")
  if protocol not in PROTOCOLS: raise ValueError("Unsupported cryptographic protocol.")
  if any(k not in datasets for k in HOSPITALS): raise ValueError("All three synthetic datasets must be loaded.")
