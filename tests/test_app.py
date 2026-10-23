@@ -54,3 +54,41 @@ def test_run_preset_query_post():
     html = b"".join(res).decode("utf-8")
     assert "RUN COMPLETE" in html
     assert "Shamir threshold sharing" in html
+
+def test_tabs_presence():
+    res = app(make_environ("/"), start_response)
+    html = b"".join(res).decode("utf-8")
+    assert "id=\"nav-landing\"" in html
+    assert "id=\"nav-custody\"" in html
+    assert "id=\"nav-compute\"" in html
+    assert "id=\"nav-attack\"" in html
+    assert "id=\"nav-integrity\"" in html
+    assert "id=\"nav-security\"" in html
+    assert "id=\"sec-landing\"" in html
+    assert "id=\"sec-custody\"" in html
+    assert "id=\"sec-compute\"" in html
+    assert "id=\"sec-attack\"" in html
+    assert "id=\"sec-integrity\"" in html
+    assert "id=\"sec-security\"" in html
+
+def test_diff_and_fidelity_table():
+    res = app(make_environ("/"), start_response)
+    html = b"".join(res).decode("utf-8")
+    assert "diff-wrap" in html
+    assert "STATISTICAL UTILITY ANALYSIS" in html
+    assert "Overall Fidelity: 99.98%" in html
+    assert "Absolute Difference" in html
+
+def test_attack_simulation_tab():
+    res = app(make_environ("/"), start_response)
+    html = b"".join(res).decode("utf-8")
+    assert "attack-box" in html
+    assert "LIVE LINKAGE ATTACK SIMULATION" in html
+    assert "Sarah Jenkins" in html
+    assert "David Miller" in html
+    assert "Elena Rostova" in html
+    assert "VULNERABLE - RE-IDENTIFICATION SUCCESSFUL" in html
+    assert "PROTECTED - ATTACK COMPLETELY THWARTED" in html
+    assert "Raw Patient Rows Disclosed" in html
+
+
