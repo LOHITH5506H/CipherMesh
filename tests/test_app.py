@@ -40,8 +40,9 @@ def test_run_natural_language_query_post():
     res = app(make_environ("/run", method="POST", form_data=form), start_response)
     html = b"".join(res).decode("utf-8")
     assert "RUN COMPLETE" in html
-    assert "Privacy Query Plan" in html
+    assert "PRIVACY COMPILATION PLAN" in html
     assert "mg/dL" in html or "years" in html or "patients" in html
+
 
 def test_run_preset_query_post():
     form = {
@@ -76,19 +77,67 @@ def test_diff_and_fidelity_table():
     html = b"".join(res).decode("utf-8")
     assert "diff-wrap" in html
     assert "STATISTICAL UTILITY ANALYSIS" in html
-    assert "Overall Fidelity: 99.98%" in html
+    assert "Query Fidelity:" in html
     assert "Absolute Difference" in html
+    assert "Response With Cryptography" in html
+    assert "Same Query Output Without Cryptography" in html
 
-def test_attack_simulation_tab():
+def test_query_diff_on_custom_query_post():
+    form = {
+        "mode": "nl",
+        "prompt": "What is the average age of patients with diabetes?",
+        "protocol": "additive",
+        "integrity": "yes",
+    }
+    res = app(make_environ("/run", method="POST", form_data=form), start_response)
+    html = b"".join(res).decode("utf-8")
+    assert "Response With Cryptography (CipherMesh)" in html
+    assert "Same Query Output Without Cryptography" in html
+    assert "53.2 years" in html
+
+
+def test_attack_simulation_standby_and_execution():
+    # 1. Standby state before user triggers
     res = app(make_environ("/"), start_response)
     html = b"".join(res).decode("utf-8")
     assert "attack-box" in html
-    assert "LIVE LINKAGE ATTACK SIMULATION" in html
     assert "Sarah Jenkins" in html
     assert "David Miller" in html
     assert "Elena Rostova" in html
-    assert "VULNERABLE - RE-IDENTIFICATION SUCCESSFUL" in html
-    assert "PROTECTED - ATTACK COMPLETELY THWARTED" in html
-    assert "Raw Patient Rows Disclosed" in html
+    assert "Dr. James Wilson" in html
+    assert "Marcus Chen" in html
+    assert "Olivia Vance" in html
+    assert "Execute Live Attack Simulation" in html
+    assert "Simulation Standby" in html
+
+    # 2. Execution when user triggers simulation
+    form = {
+        "victim": "PT-A-011",
+        "attack_type": "linkage"
+    }
+    res_sim = app(make_environ("/simulate-attack", method="POST", form_data=form), start_response)
+    html_sim = b"".join(res_sim).decode("utf-8")
+    assert "LIVE SIMULATION COMPLETED" in html_sim
+    assert "VULNERABLE - RE-IDENTIFICATION SUCCESSFUL" in html_sim
+    assert "PROTECTED - ATTACK COMPLETELY THWARTED" in html_sim
+    assert "Sarah Jenkins" in html_sim
+
+def test_data_custody_shows_20_rows_by_default():
+    res = app(make_environ("/"), start_response)
+    html = b"".join(res).decode("utf-8")
+    assert "20 records displayed by default" in html
+    assert "PT-A-020" in html
+    assert "PT-B-020" in html
+    assert "PT-C-020" in html
+
+def test_security_model_tab_removed_previous_section():
+    res = app(make_environ("/"), start_response)
+    html = b"".join(res).decode("utf-8")
+    assert "What this prototype does and does not promise" not in html
+    assert "CRYPTOGRAPHIC ARCHITECTURE VERIFICATION" in html
+    assert "Additive Secret Sharing MPC" in html
+    assert "Shamir (2-of-3) Threshold Sharing" in html
+    assert "Paillier Additive Homomorphic Encryption" in html
+
 
 

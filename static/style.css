@@ -76,4 +76,21 @@
 .compromised-item{display:inline-block;background:#ff000018;color:#ff9999;border:1px solid #ff000033;padding:3px 8px;border-radius:6px;font:10px 'DM Mono',monospace;margin:3px 4px 3px 0}
 .diff-wrap{margin-top:24px;border:1px solid var(--line);background:linear-gradient(145deg,#101820,#0b1016);border-radius:var(--radius);padding:24px}
 .diff-badge{background:#9af5d018;color:var(--mint);border:1px solid #9af5d033;padding:4px 8px;border-radius:6px;font:10px 'DM Mono',monospace}
+
+.attack-type-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:14px 0 22px}
+.attack-type-btn{background:#ffffff06;border:1px solid #ffffff18;padding:14px;border-radius:12px;cursor:pointer;text-align:left;transition:all .2s ease;display:block;width:100%}
+.attack-type-btn:hover{background:#ffffff10;border-color:#ffffff33}
+.attack-type-btn.active{background:#ff4d4d14;border-color:#ff4d4d88;box-shadow:0 0 16px rgba(255,77,77,0.2)}
+.attack-type-btn strong{display:block;font-size:12px;color:#fff;margin-bottom:4px}
+.attack-type-btn p{margin:0;font-size:11px;color:#a8b8c5;line-height:1.4}
+
+.sim-trigger-btn{background:linear-gradient(135deg,#e11d48,#be123c);color:#fff;border:0;font:800 13px Manrope;padding:14px 28px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 18px rgba(225,29,72,0.35);transition:all .2s ease}
+.sim-trigger-btn:hover{filter:brightness(1.15);box-shadow:0 6px 24px rgba(225,29,72,0.5);transform:translateY(-1px)}
+.recalc-btn{background:#78d9ed18;color:var(--cyan);border:1px solid #78d9ed44;font:700 11px Manrope;padding:7px 14px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease}
+.recalc-btn:hover{background:#78d9ed28;border-color:var(--cyan)}
+
+.site-table-open{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.site-table-open summary{font-size:12px;font-weight:700;color:var(--mint);cursor:pointer;padding:6px 0;user-select:none}
+.site-scroll{max-height:440px;overflow-y:auto;border-radius:8px;border:1px solid #ffffff10}
+
 

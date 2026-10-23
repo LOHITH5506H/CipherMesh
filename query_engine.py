@@ -126,10 +126,11 @@ def local_rule_parser(prompt: str) -> dict[str, Any]:
     if any(w in p for w in ["non-diabetic", "without diabetes", "no diabetes", "diabetes=no", "diabetes: no"]):
         filters.append({"field": "Diabetes", "op": "==", "value": "No"})
         fields.append("Diabetes")
-    elif any(w in p for w in ["diabetic", "with diabetes", "has diabetes", "diabetes=yes", "diabetes: yes"]):
+    elif any(w in p for w in ["diabetic", "with diabetes", "has diabetes", "have diabetes", "diabetes=yes", "diabetes: yes"]):
         if not ("prevalence of diabetes" in p or "diabetes rate" in p or "percentage of" in p):
             filters.append({"field": "Diabetes", "op": "==", "value": "Yes"})
             fields.append("Diabetes")
+
 
     # 2. Detect Age filters
     age_over = re.search(r"(?:age|older than|over|above|>=|>)\s*(\d{2})\s*(?:years|yrs|yo)?", p)
